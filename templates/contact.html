@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Form</title>
+    <style>
+        /* Basic styling for the contact form */
+        form label {
+            font-size: 1.2em;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+        form input, form textarea {
+            width: 80%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+        form input[type="submit"] {
+            width: auto;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h2>Town of Paradise IT Help Form</h2>
+    <form method="POST" action="{{ url_for('contact') }}">
+        {{ form.hidden_tag() }}
+        <div>
+            {{ form.name.label }}
+            {{ form.name }}
+        </div>
+        <div>
+            {{ form.email.label }}
+            {{ form.email }}
+        </div>
+        <div>
+            {{ form.subject.label }}
+            {{ form.subject }}
+        </div>
+        <div>
+            {{ form.message.label }}
+            {{ form.message }}
+        </div>
+        <div>
+            {{ form.submit }}
+        </div>
+    </form>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <ul>
+                {% for category, message in messages %}
+                    <li class="{{ category }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+</body>
+</html>
