@@ -1,8 +1,9 @@
 from flask import Flask, render_template, request, flash, redirect, url_for
 from flask_mail import Mail, Message
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, SubmitField
+from wtforms import StringField, TextAreaField, SubmitField, FileField
 from wtforms.validators import DataRequired, Email
+from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
 import os
 
@@ -26,6 +27,7 @@ class ContactForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
     subject = StringField('Subject', validators=[DataRequired()])
     message = TextAreaField('Message', validators=[DataRequired()])
+    image = FileField('Image')  # New field for image upload
     submit = SubmitField('Send')
 
 @app.route('/contact', methods=['GET', 'POST'])
@@ -35,9 +37,15 @@ def contact():
         msg = Message(
             form.subject.data,
             sender=app.config['MAIL_DEFAULT_SENDER'],
-            recipients=['helpdesk@townofparadise.com']  # Replace with your email for testing
+            recipients=['helpdesk@townofparadise.com']  
         )
         msg.body = f"From: {form.name.data} <{form.email.data}>\n\n{form.message.data}"
+        if form.image.data:  # If an image file was uploaded
+            image_file = request.files[form.image.name]
+            filename = secure_filename(image_file.filename)
+            image_file.save(os.path.join('uploads', filename))  # Save the file to a directory named 'uploads'
+            with app.open_resource(os.path.join('uploads', filename)) as fp:
+                msg.attach(filename, 'image/*', fp.read())  # Attach the file to the email message
         try:
             mail.send(msg)
             flash('Email sent successfully!', 'success')
