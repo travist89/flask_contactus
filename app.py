@@ -16,7 +16,7 @@ app.config['MAIL_SERVER'] = 'smtp.office365.com'  # Exchange Online SMTP server
 app.config['MAIL_PORT'] = 587  # SMTP port for TLS
 app.config['MAIL_USE_TLS'] = True  
 app.config['MAIL_USE_SSL'] = False  
-app.config['MAIL_USERNAME'] = 'helpdeskform@townofparadise.com'  
+app.config['MAIL_USERNAME'] = 'helpdeskform@townofparadise.com'    
 app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')  # Read from environment variable
 app.config['MAIL_DEFAULT_SENDER'] = 'helpdeskform@townofparadise.com'
 
@@ -67,7 +67,7 @@ def contact():
         
         try:
             mail.send(msg1)
-            flash('Email sent successfully!', 'success')
+            ####flash('Email sent successfully!', 'success')
         except Exception as e:
             flash(f'Failed to send email: {str(e)}', 'danger')
         return redirect(url_for('contact'))
