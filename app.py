@@ -16,9 +16,9 @@ app.config['MAIL_SERVER'] = 'smtp.office365.com'  # Exchange Online SMTP server
 app.config['MAIL_PORT'] = 587  # SMTP port for TLS
 app.config['MAIL_USE_TLS'] = True  
 app.config['MAIL_USE_SSL'] = False  
-app.config['MAIL_USERNAME'] = 'tthompson@townofparadise.com'  
+app.config['MAIL_USERNAME'] = 'helpdeskform@townofparadise.com'  
 app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')  # Read from environment variable
-app.config['MAIL_DEFAULT_SENDER'] = 'tthompson@townofparadise.com'
+app.config['MAIL_DEFAULT_SENDER'] = 'helpdeskform@townofparadise.com'
 
 mail = Mail(app)
 
@@ -34,20 +34,39 @@ class ContactForm(FlaskForm):
 def contact():
     form = ContactForm()
     if form.validate_on_submit():
-        msg = Message(
+
+        #create message object
+        msg1 = Message(
             form.subject.data,
             sender=app.config['MAIL_DEFAULT_SENDER'],
             recipients=['helpdesk@townofparadise.com']  
         )
-        msg.body = f"From: {form.name.data} <{form.email.data}>\n\n{form.message.data}"
+        msg1.body = f"From: {form.name.data} <{form.email.data}>\n\n{form.message.data}"
         if form.image.data:  # If an image file was uploaded
             image_file = request.files[form.image.name]
             filename = secure_filename(image_file.filename)
             image_file.save(os.path.join('uploads', filename))  # Save the file to a directory named 'uploads'
             with app.open_resource(os.path.join('uploads', filename)) as fp:
-                msg.attach(filename, 'image/*', fp.read())  # Attach the file to the email message
+                msg1.attach(filename, 'image/*', fp.read())  # Attach the file to the email message
+        
+        # Create a second message object
+        msg2 = Message(
+            'Request Received',
+            sender=app.config['MAIL_DEFAULT_SENDER'],
+            recipients=[form.email.data]
+        )
+        msg2.body = 'Luis and Travis have received your request and will be in touch soon!'
+
+        # Send the second email
         try:
-            mail.send(msg)
+            mail.send(msg2)
+            flash('Luis and Travis have received your request and will be in touch soon!', 'success')
+        except Exception as e:
+            flash(f'Failed to send second email: {str(e)}', 'danger')
+        
+        
+        try:
+            mail.send(msg1)
             flash('Email sent successfully!', 'success')
         except Exception as e:
             flash(f'Failed to send email: {str(e)}', 'danger')
