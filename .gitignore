@@ -1,3 +1,6 @@
 # .gitignore
 
 *.env
+
+/uploads/*
+!/uploads/.gitkeep
