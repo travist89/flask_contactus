@@ -23,11 +23,11 @@ app.config['MAIL_DEFAULT_SENDER'] = 'helpdeskform@townofparadise.com'
 mail = Mail(app)
 
 class ContactForm(FlaskForm):
-    name = StringField('Name', validators=[DataRequired()])
-    email = StringField('Email', validators=[DataRequired(), Email()])
+    name = StringField('Your Name', validators=[DataRequired()])
+    email = StringField('Your Email', validators=[DataRequired(), Email()])
     subject = StringField('Subject', validators=[DataRequired()])
     message = TextAreaField('Message', validators=[DataRequired()])
-    image = FileField('Image')  # New field for image upload
+    image = FileField('Image/Screenshot')  # New field for image upload
     submit = SubmitField('Send')
 
 @app.route('/contact', methods=['GET', 'POST'])
