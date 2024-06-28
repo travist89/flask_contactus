@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, flash, redirect, url_for
 from flask_mail import Mail, Message
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, SubmitField, FileField
+from wtforms import StringField, TextAreaField, SubmitField, FileField, SelectField
 from wtforms.validators import DataRequired, Email
 from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
@@ -29,6 +29,9 @@ class ContactForm(FlaskForm):
     message = TextAreaField('Message', validators=[DataRequired()])
     image = FileField('Image/Screenshot')  # New field for image upload
     submit = SubmitField('Send')
+    location = SelectField('Location', choices=[('BRC', 'BRC'), ('TH', 'TH'), ('PD', 'PD')], validators=[DataRequired()])
+    priority = SelectField('Priority Level', choices=[('low', 'Low'), ('medium', 'Medium'), ('high', 'High')], validators=[DataRequired()])
+
 
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():
